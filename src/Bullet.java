@@ -1,8 +1,8 @@
 import info.gridworld.actor.Actor;
 import info.gridworld.actor.Bug;
+import info.gridworld.grid.Location;
 
 import java.awt.Color;
-import java.util.ArrayList;
 
 
 public class Bullet extends Bug{
@@ -18,14 +18,24 @@ public class Bullet extends Bug{
 	}
 	
 	public void act() {
-		super.act();
 		if (!canMove()) {
-			ArrayList<Actor> neighbors = getGrid().getNeighbors(getLocation());
-			for (Actor a : neighbors) {
-				a.removeSelfFromGrid();
+			Location loc = getLocation().getAdjacentLocation(getDirection());
+			
+			if(getGrid().isValid(loc) && getGrid().get(loc) != null) {
+				Actor target = getGrid().get(loc);
+				target.removeSelfFromGrid();
 			}
 			removeSelfFromGrid();
+		} else {
+			move();
 		}
+		
+//			ArrayList<Actor> neighbors = getGrid().getNeighbors(getLocation());
+//			
+//			for (Actor a : neighbors) {
+//				a.removeSelfFromGrid();
+//			}
+//			removeSelfFromGrid();
 	}
 	
 //	@Override
@@ -47,11 +57,16 @@ public class Bullet extends Bug{
 //		
 //	}
 	
-//	public void move() {
-//		getLocation();
-//		getGrid().put(getLocation().getAdjacentLocation(getDirection()), new Bullet(getDirection()));
-//		removeSelfFromGrid();
-//	}
+	public void move() {
+        if (getGrid() == null)
+            return;
+        Location loc = getLocation();
+        Location next = loc.getAdjacentLocation(getDirection());
+        if (getGrid().isValid(next))
+            moveTo(next);
+        else
+            removeSelfFromGrid();
+	}
 	
 
 }

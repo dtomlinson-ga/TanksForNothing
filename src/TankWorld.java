@@ -13,7 +13,7 @@ public class TankWorld {
 		ActorWorld world = new ActorWorld();
 		world.setGrid(new BoundedGrid<Actor>(10, 10));
 		
-		world.add(new Location(0, 0), new Tank(Color.RED, "asdf"));
+		world.add(new Location(0, 0), new Tank(Color.GRAY, "asdf"));
 		
 		world.show();
 		

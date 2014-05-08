@@ -7,7 +7,7 @@ import java.awt.Color;
 public class Tank extends Bug {
 	
 	private String tankName;
-	private boolean aimAcquired;
+//	private boolean aimAcquired;
 	private int turnNumber = 0;
 	
 	public Tank() {
@@ -24,26 +24,27 @@ public class Tank extends Bug {
 
 	}
 	
-	public void move() {
-
+	public String getName() {
+		return tankName;
 	}
 	
-	public void aim() {
+	
+	/*public void aim() {
 		int range = 0;
 		int checkDirection = 0;
 		
 		while (checkDirection != 360) {
 			while (range < 5) {
-				Location loc = new Location(getLocation().getRow(), getLocation().getCol());
+				Location loc = getLocation();
 				if (getGrid().isValid(getLocation().getAdjacentLocation(checkDirection))) {
-	//				if ()
 					range++;
 				}
 			}
 			
 			checkDirection += 45;
 		}
-	}
+	}*/
+	
 	
 	public void fire() {
 		int bulletDirection = getDirection();
@@ -67,21 +68,30 @@ public class Tank extends Bug {
 	}
 
 	public void act() {
-		if (turnNumber == 6) {
+		if (turnNumber == 5) {
 			if (canMove()) {
-				super.move();
+				move();
 			}
 			else turn();
+		}
+		if (turnNumber == 9) {
+			fire();
 			turnNumber = 0;
 		}
 //		aim();
 //		if (aimAcquired) fire();
 //		else turn();
 		turnNumber++;
-		
-		if(turnNumber != 6) fire();
-		
-		//System.out.println(getLocation().getRow() + ", " + getLocation().getCol());
 	}
+	
+	 public void move() {
+        if (getGrid() == null)
+            return;
+        Location next = getLocation().getAdjacentLocation(getDirection());
+        if (getGrid().isValid(next))
+            moveTo(next);
+        else
+            removeSelfFromGrid();
+    }
 	
 }
