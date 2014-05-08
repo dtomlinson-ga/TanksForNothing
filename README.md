@@ -1,4 +1,0 @@
-TanksForNothing
-===============
-
-Tanks.
