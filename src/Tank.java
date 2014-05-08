@@ -1,10 +1,9 @@
-import info.gridworld.actor.Bug;
 import info.gridworld.grid.Location;
 
 import java.awt.Color;
 
 
-public class Tank extends Bug {
+public class Tank extends InputActor {
 	
 	private String tankName;
 //	private boolean aimAcquired;
@@ -47,11 +46,11 @@ public class Tank extends Bug {
 	
 	
 	public void fire() {
-		int bulletDirection = getDirection();
+		int direction = getDirection();
 		
-		if (getGrid().isValid(getLocation().getAdjacentLocation(getDirection()))) {
-			Bullet bullet = new Bullet(bulletDirection);
-			bullet.putSelfInGrid(getGrid(), getLocation().getAdjacentLocation(getDirection()));
+		if (getGrid().isValid(getLocation().getAdjacentLocation(direction))) {
+			Bullet bullet = new Bullet(direction);
+			bullet.putSelfInGrid(getGrid(), getLocation().getAdjacentLocation(direction));
 		}
 	}
 	
@@ -67,13 +66,12 @@ public class Tank extends Bug {
 		else return 1;
 	}
 
+	@Override
 	public void act() {
 		if (turnNumber == 5) {
-			if (canMove()) {
 				move();
-			}
-			else turn();
 		}
+		
 		if (turnNumber == 9) {
 			fire();
 			turnNumber = 0;
