@@ -1,32 +1,33 @@
 import info.gridworld.grid.Location;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 
 
 public class Tank extends InputActor {
 	
-	private String tankName;
-//	private boolean aimAcquired;
-	private int turnNumber = 0;
+	private int turnNumber;
+	private int speed;
 	
 	public Tank() {
-		super();
-		setColor(Color.GRAY);
-		tankName = "NPC";
-		
+		this(Color.GRAY, false, 3);
 	}
 	
-	public Tank(Color color, String name) {
-		super();
+	/**
+	 * Tank Constructor
+	 * 
+	 * @param color - The color to use
+	 * @param isPlayer - Is this tank player or ai controlled 
+	 * @param speed - Sets how many turns the tank will wait before moving
+	 * 
+	 */
+	public Tank(Color color, boolean isPlayer, int speed) {
+		super(isPlayer, KeyEvent.VK_F);
 		setColor(color);
-		tankName = name;
-
+		
+		this.turnNumber = 0;
+		this.speed = speed;
 	}
-	
-	public String getName() {
-		return tankName;
-	}
-	
 	
 	/*public void aim() {
 		int range = 0;
@@ -45,7 +46,10 @@ public class Tank extends InputActor {
 	}*/
 	
 	
-	public void fire() {
+	/**
+	 * Fires a bullet in the direction the tank is facing 
+	 */
+	private void fire() {
 		int direction = getDirection();
 		
 		if (getGrid().isValid(getLocation().getAdjacentLocation(direction))) {
@@ -68,18 +72,18 @@ public class Tank extends InputActor {
 
 	@Override
 	public void act() {
-		if (turnNumber == 5) {
-				move();
+		
+		if(turnNumber == speed) {
+			move();
+			turnNumber = 0;
+		} else {
+			turnNumber++;
 		}
 		
-		if (turnNumber == 9) {
+		if(actionButtonPressed) {
 			fire();
-			turnNumber = 0;
 		}
-//		aim();
-//		if (aimAcquired) fire();
-//		else turn();
-		turnNumber++;
+		
 	}
 	
 	 public void move() {

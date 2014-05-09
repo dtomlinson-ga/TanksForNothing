@@ -8,8 +8,7 @@ import java.awt.Color;
 public class Bullet extends Bug{
 
 	public Bullet() {
-		setDirection(0);
-		setColor(Color.GRAY);
+		this(0);
 	}
 	
 	public Bullet(int direction) {
