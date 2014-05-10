@@ -5,7 +5,7 @@ import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 
-public  class InputActor extends Actor implements KeyEventDispatcher {
+public class InputActor extends Actor implements KeyEventDispatcher {
 	
 	private boolean isPlayer;
 	private int actionKey;
@@ -49,5 +49,15 @@ public  class InputActor extends Actor implements KeyEventDispatcher {
 		}
 		
 		return false;
+	}
+	
+	
+	protected void die() {
+		onDeath();
+	}
+	
+	protected void onDeath() {
+		KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(this);
+		
 	}
 }

@@ -1,7 +1,9 @@
 import info.gridworld.grid.Location;
 
 import java.awt.Color;
+import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
+import java.util.Random;
 
 
 public class Tank extends InputActor {
@@ -10,7 +12,7 @@ public class Tank extends InputActor {
 	private int speed;
 	
 	public Tank() {
-		this(Color.GRAY, false, 3);
+		this(new Color((int) Math.random() * 255, (int) Math.random() * 255, (int) Math.random() * 255), false, 3);
 	}
 	
 	/**
@@ -45,34 +47,8 @@ public class Tank extends InputActor {
 		}
 	}*/
 	
-	
-	/**
-	 * Fires a bullet in the direction the tank is facing 
-	 */
-	private void fire() {
-		int direction = getDirection();
-		
-		if (getGrid().isValid(getLocation().getAdjacentLocation(direction))) {
-			Bullet bullet = new Bullet(direction);
-			bullet.putSelfInGrid(getGrid(), getLocation().getAdjacentLocation(direction));
-		}
-	}
-	
-	public int getXOffset() {
-		if (getDirection() == 0 || getDirection() == 180 )return 0;
-		else if (getDirection() == 45 || getDirection() == 90 || getDirection() == 135) return 1;
-		else return -1;
-	}
-	
-	public int getYOffset() {
-		if (getDirection() == 90 || getDirection() == 270 )return 0;
-		else if (getDirection() == 315 || getDirection() == 0 || getDirection() == 45) return -1;
-		else return 1;
-	}
-
 	@Override
 	public void act() {
-		
 		if(turnNumber == speed) {
 			move();
 			turnNumber = 0;
@@ -86,14 +62,47 @@ public class Tank extends InputActor {
 		
 	}
 	
-	 public void move() {
-        if (getGrid() == null)
+	public void move() {
+        if (getGrid() == null) {
             return;
+        }    
+           
         Location next = getLocation().getAdjacentLocation(getDirection());
-        if (getGrid().isValid(next))
+        
+        if (getGrid().isValid(next)) {
             moveTo(next);
-        else
-            removeSelfFromGrid();
-    }
-	
+        } else {
+        	die();
+        }
+	}
+	 
+	/**
+	 * Fires a bullet in the direction the tank is facing 
+	 */
+	private void fire() {
+			int direction = getDirection();
+			
+			if (getGrid().isValid(getLocation().getAdjacentLocation(direction))) {
+				Bullet bullet = new Bullet(direction);
+				bullet.putSelfInGrid(getGrid(), getLocation().getAdjacentLocation(direction));
+			}
+		}
+		
+		public int getXOffset() {
+			if (getDirection() == 0 || getDirection() == 180 )return 0;
+			else if (getDirection() == 45 || getDirection() == 90 || getDirection() == 135) return 1;
+			else return -1;
+		}
+		
+		public int getYOffset() {
+			if (getDirection() == 90 || getDirection() == 270 )return 0;
+			else if (getDirection() == 315 || getDirection() == 0 || getDirection() == 45) return -1;
+			else return 1;
+		}
+	 
+	@Override
+	protected void die() {
+		super.onDeath();
+		removeSelfFromGrid();
+	}	 	
 }
