@@ -2,6 +2,7 @@ import info.gridworld.grid.Location;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.util.Random;
 
 public class Tank extends InputActor {
 	
@@ -16,7 +17,7 @@ public class Tank extends InputActor {
 	 * Tank Constructor
 	 * 
 	 * @param color - The color to use
-	 * @param isPlayer - If the tank is to use player input or ai
+	 * @param isPlayer - If the tank player or ai controlled
 	 * @param speed - Sets how many turns the tank will wait before moving
 	 * 
 	 */
@@ -29,22 +30,7 @@ public class Tank extends InputActor {
 		this.turnNumber = 0;
 		this.speed = speed;
 	}
-	
-	/*public void aim() {
-		int range = 0;
-		int checkDirection = 0;
-		
-		while (checkDirection != 360) {
-			while (range < 5) {
-				Location loc = getLocation();
-				if (getGrid().isValid(getLocation().getAdjacentLocation(checkDirection))) {
-					range++;
-				}
-			}
-			
-			checkDirection += 45;
-		}
-	}*/
+
 	
 	@Override
 	public void act() {
@@ -52,6 +38,7 @@ public class Tank extends InputActor {
 			if(canMove()) {
 				move();
 			}
+			
 			turnNumber = 0;
 		} else {
 			turnNumber++;
@@ -63,12 +50,12 @@ public class Tank extends InputActor {
 				actionButtonPressed = false;
 			}
 		} else {
-			processAi();
+			updateAi();
 		}
-
 	}
 	
 	private void move() {
+
         if (getGrid() == null) {
             return;
         }    
@@ -81,43 +68,91 @@ public class Tank extends InputActor {
         	die();
         }
 	}
-	 
-	/**
-	 * Fires a bullet in the direction the tank is facing 
-	 */
-	private void fire() {
-		int direction = getDirection();
-			
-		if (getGrid().isValid(getLocation().getAdjacentLocation(direction))) {
-			Bullet bullet = new Bullet(direction);
-			bullet.putSelfInGrid(getGrid(), getLocation().getAdjacentLocation(direction));
-		}
-	}
-		
-	private void processAi() {
-		
-	}
-	
-//	public int getXOffset() {
-//			if (getDirection() == 0 || getDirection() == 180 )return 0;
-//			else if (getDirection() == 45 || getDirection() == 90 || getDirection() == 135) return 1;
-//			else return -1;
-//	}
-//		
-//	public int getYOffset() {
-//		if (getDirection() == 90 || getDirection() == 270 )return 0;
-//		else if (getDirection() == 315 || getDirection() == 0 || getDirection() == 45) return -1;
-//		else return 1;
-//	}
 	
 	private boolean canMove() {
 		Location loc = getLocation().getAdjacentLocation(getDirection());
-		
 		if(getGrid().isValid(loc) && getGrid().get(loc) == null) {
 			return true;
 		}
 		
 		return false;
+	}		
+
+	private Location target;
+	private void updateAi() {
+		Location newTarget = getLocationToFireAt();
+		if(newTarget != null && !newTarget.equals(target)) {
+			target = newTarget;
+			fire();
+		}
+		
+		turnRandomly();
+
+	}
+	
+	public Location getLocationToFireAt() {
+		Location defaultLocation = getLocation();
+		Location loc = getLocation();
+		
+		switch(getDirection()) {
+			case(Location.NORTH):
+				for(int i = 1; getGrid().isValid(loc); ++i) {
+					loc = new Location(defaultLocation.getRow() - i, defaultLocation.getCol());
+					if(getGrid().isValid(loc) && getGrid().get(loc) instanceof Tank) {
+						return loc;
+					}
+				}
+				return null;
+			case(Location.EAST):
+				for(int i = 1; getGrid().isValid(loc); ++i) {
+					loc = new Location(defaultLocation.getRow(), defaultLocation.getCol() - i);
+					if(getGrid().isValid(loc) && getGrid().get(loc) instanceof Tank) {
+						return loc;
+					}
+				}
+				return null;
+			case(Location.SOUTH):
+				for(int i = 1; getGrid().isValid(loc); ++i) {
+					loc = new Location(defaultLocation.getRow() + i, defaultLocation.getCol());
+					if(getGrid().isValid(loc) && getGrid().get(loc) instanceof Tank) {
+						return loc;
+					}
+				}
+				return null;
+			case(Location.WEST):
+				for(int i = 1; getGrid().isValid(loc); ++i) {
+					loc = new Location(defaultLocation.getRow(), defaultLocation.getCol() + i);
+					if(getGrid().isValid(loc) && getGrid().get(loc) instanceof Tank) {
+						return loc;
+					}
+				}
+				return null;
+			default:
+				return null;
+		}		
+	}
+	
+	private final float chanceToTurn = 5f;
+	private void turnRandomly() {
+		
+		Random random = new Random();
+		if(random.nextInt(100) < chanceToTurn) {
+			int newDirection = random.nextInt(4);
+			setDirection(newDirection * 90);
+		}
+	}
+	
+	/**
+	 * Fires a bullet in the direction the tank is facing 
+	 */
+	private void fire() {
+		int direction = getDirection();
+		Location adjacentLocation = getLocation().getAdjacentLocation(direction);
+			
+		if (getGrid().isValid(getLocation().getAdjacentLocation(direction))) {
+			Bullet bullet = new Bullet(direction);
+			bullet.putSelfInGrid(getGrid(), getLocation().getAdjacentLocation(direction));
+		}
 	}
 	
 	@Override
