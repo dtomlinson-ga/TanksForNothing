@@ -9,8 +9,11 @@ public class Tank extends InputActor {
 	private int turnNumber;
 	private int speed;
 	
+	private static Random random = new Random();
+
 	public Tank() {
-		this(new Color((int) Math.random() * 255, (int) Math.random() * 255, (int) Math.random() * 255), false, 3);
+		this(new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255)), false, 3, 0);
+		setDirection(random.nextInt(4) * 90);	
 	}
 	
 	/**
@@ -21,7 +24,7 @@ public class Tank extends InputActor {
 	 * @param speed - Sets how many turns the tank will wait before moving
 	 * 
 	 */
-	public Tank(Color color, boolean isPlayer, int speed) {
+	public Tank(Color color, boolean isPlayer, int speed, int direction) {
 		super(isPlayer, KeyEvent.VK_F);
 		setColor(color);
 		
@@ -90,7 +93,7 @@ public class Tank extends InputActor {
 
 	}
 	
-	public Location getLocationToFireAt() {
+	private Location getLocationToFireAt() {
 		Location defaultLocation = getLocation();
 		Location loc = getLocation();
 		
@@ -105,7 +108,7 @@ public class Tank extends InputActor {
 				return null;
 			case(Location.EAST):
 				for(int i = 1; getGrid().isValid(loc); ++i) {
-					loc = new Location(defaultLocation.getRow(), defaultLocation.getCol() - i);
+					loc = new Location(defaultLocation.getRow(), defaultLocation.getCol() + i);
 					if(getGrid().isValid(loc) && getGrid().get(loc) instanceof Tank) {
 						return loc;
 					}
@@ -121,7 +124,7 @@ public class Tank extends InputActor {
 				return null;
 			case(Location.WEST):
 				for(int i = 1; getGrid().isValid(loc); ++i) {
-					loc = new Location(defaultLocation.getRow(), defaultLocation.getCol() + i);
+					loc = new Location(defaultLocation.getRow(), defaultLocation.getCol() - i);
 					if(getGrid().isValid(loc) && getGrid().get(loc) instanceof Tank) {
 						return loc;
 					}
@@ -132,10 +135,8 @@ public class Tank extends InputActor {
 		}		
 	}
 	
-	private final float chanceToTurn = 5f;
+	private final int chanceToTurn = 5;
 	private void turnRandomly() {
-		
-		Random random = new Random();
 		if(random.nextInt(100) < chanceToTurn) {
 			int newDirection = random.nextInt(4);
 			setDirection(newDirection * 90);
@@ -149,9 +150,9 @@ public class Tank extends InputActor {
 		int direction = getDirection();
 		Location adjacentLocation = getLocation().getAdjacentLocation(direction);
 			
-		if (getGrid().isValid(getLocation().getAdjacentLocation(direction))) {
+		if (getGrid().isValid(adjacentLocation)) {
 			Bullet bullet = new Bullet(direction);
-			bullet.putSelfInGrid(getGrid(), getLocation().getAdjacentLocation(direction));
+			bullet.putSelfInGrid(getGrid(), adjacentLocation);
 		}
 	}
 	
@@ -159,5 +160,6 @@ public class Tank extends InputActor {
 	protected void die() {
 		super.onDeath();
 		removeSelfFromGrid();
+		TankWorld.decreaseTanks();
 	}	 	
 }

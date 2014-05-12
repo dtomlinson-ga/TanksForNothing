@@ -19,9 +19,13 @@ public class Bullet extends Actor {
 		if (!canMove()) {
 			Location loc = getLocation().getAdjacentLocation(getDirection());
 			
-			if(getGrid().isValid(loc) && getGrid().get(loc) != null) {
-				Actor target = getGrid().get(loc);
-				target.removeSelfFromGrid();
+			if(getGrid().isValid(loc) && getGrid().get(loc) instanceof Tank) {
+				Tank target = (Tank) getGrid().get(loc);
+				Location targetLoc = target.getLocation();
+				target.die();
+
+				Debris explode = new Debris();
+				explode.putSelfInGrid(getGrid(), targetLoc);
 			}
 			removeSelfFromGrid();
 		} else {
@@ -46,8 +50,9 @@ public class Bullet extends Actor {
         Location next = loc.getAdjacentLocation(getDirection());
         if (getGrid().isValid(next))
             moveTo(next);
-        else
+        else {
             removeSelfFromGrid();
+        }
 	}
 	
 

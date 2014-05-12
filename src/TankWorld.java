@@ -3,19 +3,47 @@ import info.gridworld.actor.ActorWorld;
 import info.gridworld.grid.BoundedGrid;
 import info.gridworld.grid.Location;
 
-import java.awt.Color;
-
 
 public class TankWorld {
 
+	public static int tankCount = 0;
+	private static int trueTankCount = 0;
+
+	private static ActorWorld world = new ActorWorld();
+
 	public static void main (String[] args) {
 		
-		ActorWorld world = new ActorWorld();
-		world.setGrid(new BoundedGrid<Actor>(10, 10));
+		//world.setGrid(new BoundedGrid<Actor>(70, 150));
+		world.setGrid(new BoundedGrid<Actor>(25,25));
 		
-		world.add(new Location(0, 0), new Tank(Color.GRAY, true, 5));	
-		world.add(new Location(4, 9), new Tank(Color.GRAY, false, 15));
+		//world.add(new Location(0, 0), new Tank(Color.GRAY, true, 5));
+		
+		for (int i = 0; i < 300; i++) {
+			world.add(world.getRandomEmptyLocation(), new Tank());
+		}
+		
 
+		
+		for (int x = 0; x < world.getGrid().getNumRows(); x++) {
+			for (int y = 0; y < world.getGrid().getNumRows(); y++) {
+				if (world.getGrid().get(new Location(x, y)) != null) trueTankCount++;
+			}
+		}
+		
 		world.show();
+		
+		world.setMessage("Estimated tank count: " + tankCount + "\nActual tank count at start: " + trueTankCount);
+	}
+	
+	public static void increaseTanks() {
+		tankCount++;
+		world.setMessage("Estimated tank count: " + tankCount + "\nActual tank count at start: " + trueTankCount);
+
+	}
+	
+	public static void decreaseTanks() {
+		tankCount--;
+		world.setMessage("Estimated tank count: " + tankCount + "\nActual tank count at start: " + trueTankCount);
+
 	}
 }
