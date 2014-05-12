@@ -7,14 +7,14 @@ import java.awt.event.KeyEvent;
 
 public class InputActor extends Actor implements KeyEventDispatcher {
 	
-	private boolean isPlayer;
 	private int actionKey;
 	protected boolean actionButtonPressed;
+	protected boolean isPlayer;
 	
 	public InputActor(boolean isPlayer, int actionKey) {
 		super();
-		this.isPlayer = isPlayer;
 		this.actionButtonPressed = false;
+		this.isPlayer = isPlayer;
 		this.actionKey = actionKey;
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
 	}
@@ -29,7 +29,7 @@ public class InputActor extends Actor implements KeyEventDispatcher {
 			} else {
 				actionButtonPressed = false;
 			}
-			
+				
 			switch(keyPressed) {
 				case(KeyEvent.VK_W):
 					setDirection(Location.NORTH);
@@ -47,7 +47,7 @@ public class InputActor extends Actor implements KeyEventDispatcher {
 					return false;
 			}	
 		}
-		
+
 		return false;
 	}
 	

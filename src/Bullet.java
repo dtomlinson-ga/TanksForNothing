@@ -1,11 +1,9 @@
 import info.gridworld.actor.Actor;
-import info.gridworld.actor.Bug;
 import info.gridworld.grid.Location;
 
 import java.awt.Color;
 
-
-public class Bullet extends Bug{
+public class Bullet extends Actor {
 
 	public Bullet() {
 		this(0);
@@ -16,6 +14,7 @@ public class Bullet extends Bug{
 		setColor(Color.GRAY);
 	}
 	
+	@Override
 	public void act() {
 		if (!canMove()) {
 			Location loc = getLocation().getAdjacentLocation(getDirection());
@@ -28,35 +27,19 @@ public class Bullet extends Bug{
 		} else {
 			move();
 		}
-		
-//			ArrayList<Actor> neighbors = getGrid().getNeighbors(getLocation());
-//			
-//			for (Actor a : neighbors) {
-//				a.removeSelfFromGrid();
-//			}
-//			removeSelfFromGrid();
 	}
 	
-//	@Override
-//	public void act() {
-//		while (getGrid().isValid(getLocation().getAdjacentLocation(getDirection()))) {
-//			move();
-//		}
-//		
-//		if (!getGrid().isValid(getLocation().getAdjacentLocation(getDirection()))) {
-//			ArrayList<Actor> neighbors = getGrid().getNeighbors(getLocation());
-//
-//			for (Actor a : neighbors) {
-//				a.removeSelfFromGrid();
-//			}
-//		
-//			removeSelfFromGrid();
-//			System.out.println("removed");
-//		}
-//		
-//	}
+	private boolean canMove() {
+		Location loc = getLocation().getAdjacentLocation(getDirection());
+		
+		if(getGrid().isValid(loc) && getGrid().get(loc) == null) {
+			return true;
+		}
+		
+		return false;
+	}
 	
-	public void move() {
+	private void move() {
         if (getGrid() == null)
             return;
         Location loc = getLocation();
