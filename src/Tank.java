@@ -1,3 +1,5 @@
+import info.gridworld.actor.Actor;
+import info.gridworld.grid.Grid;
 import info.gridworld.grid.Location;
 
 import java.awt.Color;
@@ -12,8 +14,7 @@ public class Tank extends InputActor {
 	private static Random random = new Random();
 
 	public Tank() {
-		this(new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255)), false, 3, 0);
-		setDirection(random.nextInt(4) * 90);	
+		this(new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255)), false, random.nextInt(5) + 5, random.nextInt(4) * 90);
 	}
 	
 	/**
@@ -27,6 +28,7 @@ public class Tank extends InputActor {
 	public Tank(Color color, boolean isPlayer, int speed, int direction) {
 		super(isPlayer, KeyEvent.VK_F);
 		setColor(color);
+		setDirection(direction);
 		
 		this.isPlayer = isPlayer;
 		
@@ -150,16 +152,31 @@ public class Tank extends InputActor {
 		int direction = getDirection();
 		Location adjacentLocation = getLocation().getAdjacentLocation(direction);
 			
-		if (getGrid().isValid(adjacentLocation)) {
-			Bullet bullet = new Bullet(direction);
-			bullet.putSelfInGrid(getGrid(), adjacentLocation);
+		if(getGrid().isValid(adjacentLocation)) {
+			Actor actorAtLoc = getGrid().get(adjacentLocation);
+			if (actorAtLoc == null) {
+				Bullet bullet = new Bullet(direction);
+				bullet.putSelfInGrid(getGrid(), adjacentLocation);
+			} else if(actorAtLoc instanceof Tank) {	
+				((Tank) actorAtLoc).die();
+				Bullet bullet = new Bullet(direction);
+				bullet.putSelfInGrid(getGrid(), adjacentLocation);
+			}
 		}
 	}
 	
 	@Override
 	protected void die() {
 		super.onDeath();
+		Location loc = getLocation();
+		Grid<Actor> gr = getGrid();
 		removeSelfFromGrid();
+		
+		Debris explode = new Debris();
+		explode.putSelfInGrid(gr, loc);
+		
+		if (isPlayer) TankWorld.gameOver();
+		
 		TankWorld.decreaseTanks();
 	}	 	
 }

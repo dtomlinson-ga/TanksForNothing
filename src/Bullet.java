@@ -11,7 +11,7 @@ public class Bullet extends Actor {
 	
 	public Bullet(int direction) {
 		setDirection(direction);
-		setColor(Color.GRAY);
+		setColor(Color.RED);
 	}
 	
 	@Override
@@ -21,11 +21,7 @@ public class Bullet extends Actor {
 			
 			if(getGrid().isValid(loc) && getGrid().get(loc) instanceof Tank) {
 				Tank target = (Tank) getGrid().get(loc);
-				Location targetLoc = target.getLocation();
 				target.die();
-
-				Debris explode = new Debris();
-				explode.putSelfInGrid(getGrid(), targetLoc);
 			}
 			removeSelfFromGrid();
 		} else {

@@ -5,22 +5,20 @@ import java.awt.Color;
 
 public class Debris extends Actor {
 	
+	private int countDown;
+	
 	public Debris() {
 		setColor(Color.RED);
+		countDown = 10;
 	}
 	
 	@Override
 	public void act() {
-		if (getColor().getRed() > 5) {
-			setColor(new Color(getColor().getRed()-5, getColor().getGreen(), getColor().getBlue()));
-		}
-		
-		if (getColor().getRed() == 0 || getColor().getAlpha() > 0) {
-			setColor(new Color(getColor().getRed(), getColor().getGreen(), getColor().getBlue(), getColor().getAlpha()-5));
-		}
-		
-		if (getColor().getAlpha() == 0)
+		if(countDown > 0) {
+			countDown--;
+			setColor(new Color(getColor().getRed(), getColor().getGreen()+25, getColor().getBlue()+25));
+		} else {
 			removeSelfFromGrid();
+		}
 	}
-
 }
